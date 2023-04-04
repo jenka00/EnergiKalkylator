@@ -1,4 +1,4 @@
-export function ProtHealthy({
+export function ProteinHealthy({
     protHealthy
 }: any) 
 {           
@@ -10,7 +10,7 @@ export function ProtHealthy({
         </div>      
     )
 } 
-export function ProtUnHealthy({
+export function ProteinUnHealthy({
     lowerLimit,
     upperLimit
 }: any)

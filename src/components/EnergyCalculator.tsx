@@ -4,7 +4,7 @@ import { useState } from "react";
 import CalculatorForm from './CalculatorForm';
 import { CalculatorValues } from './ICalculatorValues';
 import { activityValues } from './activityValues';
-import { ProtHealthy, ProtUnHealthy, ActivityInfo, OverWeightInfo } from './CalculatorInfoText';
+import { ProteinHealthy, ProteinUnHealthy, ActivityInfo, OverWeightInfo } from './CalculatorInfoText';
 
 function PersonalInput({ 
     inputValue,
@@ -94,22 +94,20 @@ export default function EnergyCalculator(){
     
 
     //Intervall för sjuka
-    let mrAdjustedExtra = 0;
+    let metabolicRateAdjustedExtra = 0;
 
     if (metabolicRate === 35) {
-        mrAdjustedExtra =  40 * (metabolicRateAdjusted / metabolicRate);
-        energyNeedExtra = Math.round(mrAdjustedExtra * weightInNumber);
+        metabolicRateAdjustedExtra =  40 * (metabolicRateAdjusted / metabolicRate);
+        energyNeedExtra = Math.round(metabolicRateAdjustedExtra * weightInNumber);
     } 
 
     //Proteinintervall beroende på hälsotillstånd och ålder
-    let protHealthy = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 0.8);
-    let protSickLowerLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 1)
-    let protSickUpperLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.5) : Math.round(weightInNumber * 1.5)
+    let proteinHealthy = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 0.8);
+    let proteinSickLowerLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 1)
+    let proteinSickUpperLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.5) : Math.round(weightInNumber * 1.5)
 
     return (
-        <div className='rh-calculator'>            
-            <header>                
-            </header>
+        <div className='rh-calculator'>    
             <h1 className='rh-calculator--headline'>Energikalkylator</h1>
             <main className='rh-calculator-container'>  
                 <div className='rh-calculator-column--left'>   
@@ -203,12 +201,12 @@ export default function EnergyCalculator(){
                             <div className="rh-result-list--icon">                                
                                 <img src='/image/pizza.svg' alt="energi"></img>
                             </div>
-                                { protHealthy > 0 ? 
+                                { proteinHealthy > 0 ? 
                                 (
                                 <div className="rh-result-list-info">
-                                    <ProtHealthy protHealthy={protHealthy} />
+                                    <ProteinHealthy protHealthy={proteinHealthy} />
                                     <OverWeightInfo length={lengthInNumber} BMI={BMI} />                                  
-                                    <ProtUnHealthy lowerLimit={protSickLowerLimit} upperLimit={protSickUpperLimit} />                                    
+                                    <ProteinUnHealthy lowerLimit={proteinSickLowerLimit} upperLimit={proteinSickUpperLimit} />                                    
                                 </div>) :
                                 (<div className="rh-result-list-info">
                                     <div>
