@@ -1,72 +1,11 @@
 import React from 'react';
-// import './envision.css';
-import './calculator.css';
+import '../calculator.css';
 import { useState } from "react";
-import CalculatorForm from './components/CalculatorForm';
+import CalculatorForm from './CalculatorForm';
+import { CalculatorValues } from './ICalculatorValues';
+import { activityValues } from './activityValues';
+import { ProtHealthy, ProtUnHealthy, ActivityInfo, OverWeightInfo } from './CalculatorInfoText';
 
-type CalculatorValues = {
-    weight: string;
-    length: string;
-    age: string;
-}
-const ActivityValues = [
-    { id: "Basalmetabolism", value: 20 }, 
-    { id: "Sängbunden", value: 25 }, 
-    { id: "Uppegående med begränsad fysisk aktivitet", value: 30 }, 
-    { id: "Återuppbyggnadskost", value: 35 }
-]
-function ProtHealthy({
-    protHealthy
-}: any) 
-{           
-    return (    
-        <div>
-            <p className="rh-result-list--text">Proteinbehov som frisk: 
-            <br className='rh-result-list--break'></br> 
-            <strong> {protHealthy} gram/dygn </strong></p>
-        </div>      
-    )
-} 
-function ProtUnHealthy({
-    lowerLimit,
-    upperLimit
-}: any)
-{
-    return (
-    <div>
-    <p className="rh-result-list--text">Proteinbehov som sjuk: 
-    <br className='rh-result-list--break'></br>
-    <strong> {lowerLimit} - {upperLimit} gram/dygn</strong></p>
-</div>
-    )
-}
-function ActivityInfo({
-    title,
-    text,
-    energyValue
-}: any){
-    return(
-    <div>
-        <p className="rh-result-list--text">{title}
-        <br className='rh-result-list--break'></br>    
-        <strong>{energyValue}{text}</strong></p>                                   
-    </div>
-    )
-} 
-function OverWeightInfo({
-    length,
-    BMI,
-}: any) {
-    const infoText = "Justering för övervikt (BMI > 25)";
-    return (    
-    <div className='rh-result-list__item-energy-info--overweight'> 
-        {(length) > 100 && BMI > 25 
-            ? <p className='rh-info-overweight--text'>{infoText}</p> 
-            : <p className='rh-info-overweight--text-invisible'>{infoText}</p>   
-        } 
-        </div> 
-    )
-}
 function PersonalInput({ 
     inputValue,
     inputTitle,
@@ -82,14 +21,16 @@ function PersonalInput({
         </div> 
     )
 }
-export default function Energikalkylator(){  
+export default function EnergyCalculator(){  
 
     const [values, setValues] = React.useState<CalculatorValues>({
         weight: "",
         length: "",
         age: ""
     });
+
     const [activity, setActivity] = useState("");
+
     const [activityMessage, setActivityMessage] = useState("");
 
     const handleChange = (fieldName: keyof CalculatorValues) => (
@@ -99,10 +40,10 @@ export default function Energikalkylator(){
         };
     
     const handleSelect = (
-        e: React.ChangeEvent<HTMLInputElement>
+        e: React.ChangeEvent<HTMLInputElement>, infoText: string
         ) => {
             setActivity(e.target.value)
-            setActivityMessage(e.target.id)
+            setActivityMessage(infoText.split('(')[0])
     }; 
 
     const refreshPage = () => {
@@ -113,25 +54,25 @@ export default function Energikalkylator(){
     let lengthInNumber = parseInt(values.length)
     let ageInNumber = parseInt(values.age);
     let BMI = Math.round((weightInNumber) / (lengthInNumber/100 * lengthInNumber/100));
-    let BmiUpperLimit = 25;
-    let BmiLowerLimit = ageInNumber >= 70 ? 22 : 20;
-    var energyNeedExtra = 0;
+    const bmiUpperLimit = 25;
+    const bmiLowerLimit = ageInNumber >= 70 ? 22 : 20;
+    let energyNeedExtra = 0;
     let energyAdjustment = 1;
-    let MR = parseInt(activity);
+    const metabolicRate = parseInt(activity);
      
     //Vid övervikt används den kroppsvikt som motsvarar BMI 25 för personens längd + tillägg av 25% av den överskjutande vikten.
-    if (BMI > BmiUpperLimit) {
-        let weight25 = BmiUpperLimit * (lengthInNumber / 100 * lengthInNumber / 100);  
+    if (BMI > bmiUpperLimit) {
+        let weight25 = bmiUpperLimit * (lengthInNumber / 100 * lengthInNumber / 100);  
         let weightExceeding = weightInNumber - weight25;
         weightInNumber = weight25 + (weightExceeding * 0.25);
     }
 
-    //Energibehov och MR justerat för övervikt
-    let energyNeed = MR * weightInNumber
-    let MRadjusted = MR;
+    //Energibehov och ämnesomsättning justerat för övervikt
+    let energyNeed = metabolicRate * weightInNumber
+    let metabolicRateAdjusted = metabolicRate;
     
     //Energibehov justerat för undervikt
-    if ( BMI < BmiLowerLimit ) {
+    if ( BMI < bmiLowerLimit ) {
         energyAdjustment = energyAdjustment + 0.1;
     }
 
@@ -141,25 +82,26 @@ export default function Energikalkylator(){
         energyAdjustment = energyAdjustment - 0.1
     } 
 
-    //Energibehov och MR justerat för ålder < 30 
+    //Energibehov och ämnesomsättning justerat för ålder < 30 
     if ( ageInNumber < 30 )
     {
         energyNeed = energyNeed * 1.1;
-        MRadjusted = MRadjusted * 1.1;
+        metabolicRateAdjusted = metabolicRateAdjusted * 1.1;
     } 
         
     energyNeed = energyNeed * energyAdjustment;
-    MRadjusted = MRadjusted * energyAdjustment;
+    metabolicRateAdjusted = metabolicRateAdjusted * energyAdjustment;
     
 
     //Intervall för sjuka
     let mrAdjustedExtra = 0;
 
-    if (MR === 35) {
-        mrAdjustedExtra =  40 * (MRadjusted / MR);
+    if (metabolicRate === 35) {
+        mrAdjustedExtra =  40 * (metabolicRateAdjusted / metabolicRate);
         energyNeedExtra = Math.round(mrAdjustedExtra * weightInNumber);
     } 
 
+    //Proteinintervall beroende på hälsotillstånd och ålder
     let protHealthy = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 0.8);
     let protSickLowerLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.2) : Math.round(weightInNumber * 1)
     let protSickUpperLimit = ageInNumber >= 70 ? Math.round(weightInNumber * 1.5) : Math.round(weightInNumber * 1.5)
@@ -201,39 +143,21 @@ export default function Energikalkylator(){
                     <div className='rh-calculator-line'></div>
                     <div className="rh-calculator-form rh-calculator-form--last">                       
                         <h2>Aktivitetsnivå</h2>
-                        <form>
-                            <div className='rh-form-activity-element-control'>                                
-                                <label>                                    
-                                    <div className='rh-form-control--label'>
-                                        <input type="radio" id={ActivityValues[0].id} name="radios" value={ActivityValues[0].value} onChange={handleSelect}/>
-                                        <span>Basalmetabolism (BMR, 20 kcal/kg/dygn)</span> 
-                                    </div> 
-                                </label>
-                            </div>
-                            <div className='rh-form-activity-element-control'>
-                                <label>
-                                    <div className='rh-form-control--label'>
-                                        <input type="radio" id={ActivityValues[1].id} name="radios" value={ActivityValues[1].value} onChange={handleSelect}/>
-                                        <span>Sängbunden (25 kcal/kg/dygn)</span>
+                        <form>  
+                            {
+                                activityValues.map(activity => { 
+                                    return (                                    
+                                    <div className='rh-form-activity-element-control' key={activity.id}>    
+                                        <label>    
+                                            <div className='rh-form-control--label'>    
+                                                <input type="radio" id={activity.id} name="radios" value={activity.value} onChange={(e) => handleSelect(e, activity.clearText)}/>    
+                                                <span>{activity.clearText}</span>    
+                                            </div>    
+                                        </label>    
                                     </div>
-                                </label>
-                            </div>  
-                            <div className='rh-form-activity-element-control'>
-                                <label>
-                                    <div className="rh-form-control--label">
-                                        <input type="radio" id={ActivityValues[2].id} name="radios" value={ActivityValues[2].value} onChange={handleSelect}/>
-                                        <span>Uppegående med begränsad fysisk aktivitet (30 kcal/kg/dygn)</span>       
-                                    </div>
-                                </label>
-                            </div>
-                            <div className='rh-form-activity-element-control'>
-                                <label>
-                                    <div className="rh-form-control--label">
-                                        <input type="radio" id={ActivityValues[3].id} name="radios" value={ActivityValues[3].value}  onChange={handleSelect}/>
-                                        <span>Återuppbyggnadskost (35-40 kcal/kg/dygn)</span>
-                                    </div>                                    
-                                </label>
-                            </div> 
+                                    )     
+                                })
+                            }                               
                         </form>       
                     </div>
                 </div>                          
