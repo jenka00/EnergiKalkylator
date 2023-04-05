@@ -1,33 +1,36 @@
 export function ProteinHealthy({
-    protHealthy
-}: any) 
+    proteinHealthy
+}: {proteinHealthy: number}) 
 {           
     return (    
         <div>
             <p className="rh-result-list--text">Proteinbehov som frisk: 
             <br className='rh-result-list--break'></br> 
-            <strong> {protHealthy} gram/dygn </strong></p>
+            <strong> {proteinHealthy} gram/dygn </strong></p>
         </div>      
     )
 } 
 export function ProteinUnHealthy({
     lowerLimit,
     upperLimit
-}: any)
+}: {lowerLimit: number,
+    upperLimit: number})
 {
     return (
     <div>
-    <p className="rh-result-list--text">Proteinbehov som sjuk: 
-    <br className='rh-result-list--break'></br>
-    <strong> {lowerLimit} - {upperLimit} gram/dygn</strong></p>
-</div>
+        <p className="rh-result-list--text">Proteinbehov som sjuk: 
+        <br className='rh-result-list--break'></br>
+        <strong> {lowerLimit} - {upperLimit} gram/dygn</strong></p>
+    </div>
     )
 }
 export function ActivityInfo({
     title,
     text,
     energyValue
-}: any){
+}: {title: string,
+    text: string,
+    energyValue: string}) {
     return(
     <div>
         <p className="rh-result-list--text">{title}
@@ -39,7 +42,8 @@ export function ActivityInfo({
 export function OverWeightInfo({
     length,
     BMI,
-}: any) {
+}: {length: number,
+    BMI: number,}) {
     const infoText = "Justering för övervikt (BMI > 25)";
     return (    
     <div className='rh-result-list__item-energy-info--overweight'> 

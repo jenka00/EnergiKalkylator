@@ -11,7 +11,11 @@ function PersonalInput({
     inputTitle,
     inputUnit
     }
-    : any) 
+    : 
+    {   inputValue: any,
+        inputTitle: string,
+        inputUnit: string
+    }) 
     {
         return(
         <div className='rh-result-list-personal--info'>                                    
@@ -45,7 +49,6 @@ export default function EnergyCalculator(){
             setActivity(e.target.value)
             setActivityMessage(infoText.split('(')[0])
     }; 
-
     const refreshPage = () => {
         window.location.reload();
     }
@@ -162,6 +165,7 @@ export default function EnergyCalculator(){
                     
                 <div className='rh-calculator-column--right'>
                     <div className='rh-calculator-form--last'>
+                        
                         {/*Personliga input-värden*/}
                         <div className='rh-result-list'>
                             <div className="rh-result-list--icon">                                
@@ -171,26 +175,28 @@ export default function EnergyCalculator(){
                                 <PersonalInput inputValue={values.weight} inputTitle='Vikt' inputUnit=' kg'/>
                                 <PersonalInput inputValue={values.length} inputTitle='Längd' inputUnit=' cm'/>
                                 <PersonalInput inputValue={values.age} inputTitle='Ålder' inputUnit=' år'/>
-                                <PersonalInput inputValue={0 < BMI && BMI < 300 && (BMI)} inputTitle='BMI' inputUnit=' '/>
+                                <PersonalInput inputValue={0 < BMI && BMI < 300 && (BMI)} inputTitle='BMI' inputUnit=""/>
                             </div>                            
-                        </div>                            
+                        </div> 
+
                             {/*Energivärden*/}
                         <div className='rh-result-list'>
                             <div className="rh-result-list--icon">                                
                                 <img src='/image/bolt.svg' alt="energi"></img>
                             </div>                            
                             <div className="rh-result-list-info">
-                                <ActivityInfo title="Aktivitetsnivå: " text={activityMessage} />
+                                <ActivityInfo title="Aktivitetsnivå: " text={activityMessage} energyValue={""}/>
                                 <OverWeightInfo length={lengthInNumber} BMI={BMI} />                              
                                 { energyNeed > 0 ? 
                                 energyNeedExtra > 0 ?
                                 (<ActivityInfo 
                                     title="Sammanlagt energibehov: " 
+                                    text=""
                                     energyValue={`${Math.round(energyNeed)} - ${Math.round(energyNeedExtra)} kcal per dygn`}/>
                                 ) :
-                                (<ActivityInfo title="Sammanlagt energibehov: " energyValue={Math.round(energyNeed)} text=" kcal per dygn" /> 
+                                (<ActivityInfo title="Sammanlagt energibehov: " energyValue={`${Math.round(energyNeed)}`} text=" kcal per dygn" /> 
                                 ) :
-                                (<ActivityInfo title="Sammanlagt energibehov: " />
+                                (<ActivityInfo title="Sammanlagt energibehov: " energyValue="" text=""/>
                                 )
                                 } 
                             </div>                         
@@ -204,7 +210,7 @@ export default function EnergyCalculator(){
                                 { proteinHealthy > 0 ? 
                                 (
                                 <div className="rh-result-list-info">
-                                    <ProteinHealthy protHealthy={proteinHealthy} />
+                                    <ProteinHealthy proteinHealthy={proteinHealthy} />
                                     <OverWeightInfo length={lengthInNumber} BMI={BMI} />                                  
                                     <ProteinUnHealthy lowerLimit={proteinSickLowerLimit} upperLimit={proteinSickUpperLimit} />                                    
                                 </div>) :

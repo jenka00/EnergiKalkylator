@@ -1,10 +1,12 @@
+import { EventHandler } from "react";
+
 export default function CalculatorForm({
     labelTitle,
     placeholderTitle,
     value,
     onChange,
     id
-}: any){
+}: {labelTitle: string, placeholderTitle: string, value: string, onChange: React.ChangeEventHandler, id: string}){
     return (
         <>
             <label>{labelTitle}</label>

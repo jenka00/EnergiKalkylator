@@ -100,7 +100,6 @@ input[type="radio"] {
   max-width: 2em;
 }
 .rh-result-list--icon img{  
-  margin-left: 2em; 
   width: 4em;
   height: 4em;
 }
@@ -133,7 +132,6 @@ input[type="radio"] {
 .rh-result-list--protein{   
   border-bottom: none;
 }
-
 /*BMI > 25 värden*/ 
 .rh-result-list__item-energy-info--overweight{
   font-size: medium; 
@@ -189,11 +187,15 @@ button{
     display: table;
     margin: 0;
     width: 100%;
-    padding: 1em 0em;
+    padding: 1.5em 0em;
+  }
+  .rh-result-list--icon{
+    display: table-row;
+    margin: auto;
+    text-align: center;
   }
   .rh-result-list--icon img{
-    margin: auto;  
-    display: table-row;  
+    margin: auto;
     padding-bottom: 0.5em; 
   }
   .rh-result-list--break{
